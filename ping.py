@@ -1,4 +1,10 @@
 from pygame import *
+from pygame.sprite import spritecollide
+
+font.init()
+font1 = font.SysFont("Arial", 35)
+lose1 = font1.render("Игрок 1 слит", True, (180, 0, 0))
+lose2 = font1.render("Игрок 2 слит", True, (180, 0, 0))
 
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
@@ -43,24 +49,44 @@ FPS = 60
 game = True
 finish = False
 
+speed_x = 3
+speed_y = 3
+
 while game:
-  for e in event.get():
-    if e.type == QUIT:
-      game = False
+    for e in event.get():
+        if e.type == QUIT:
+            game = False
  
-  if not finish:
-    window.blit(background,(0,0))
+    if finish != True:
+        window.blit(background,(0,0))
 
-    player_1.update()
-    player_1.reset()
+        player_1.update()
+        player_1.reset()
 
-    player_2.update()
-    player_2.reset()
+        player_2.update()
+        player_2.reset()
 
-    ball.update()
-    ball.reset()
+        ball.update()
+        ball.reset()
+
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+    if ball.rect.y > 1000 or ball.rect.y < 0:
+        speed_y *= -1
+
+    if sprite.collide_rect(player_1, ball) or sprite.collide_rect(player_2, ball):
+        speed_x *= -1
+    
+    if ball.rect.x < 0:
+        finish = True
+        window.blit(lose1, (200, 200))
+    
+    if ball.rect.x > 1870:
+        finish = True
+        window.blit(lose2, (200, 200))    
 
 
-    clock.tick(FPS)
-  display.update()
-      
+
+        clock.tick(FPS)
+    display.update()
